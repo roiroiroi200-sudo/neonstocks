@@ -248,7 +248,7 @@
             border-radius: 16px;
             padding: 20px;
             cursor: pointer;
-            transition: all 0.01s ease;
+            transition: all 0.3s ease;
             overflow: hidden;
             min-height: 200px;
             position: relative;
@@ -585,16 +585,15 @@
 </div>
 
 <script>
-// ⚠️⚠️⚠️ REPLACE THIS WITH YOUR ACTUAL FIREBASE CONFIG ⚠️⚠️⚠️
+// Firebase Configuration
 const firebaseConfig = {
-    
-  apiKey: "AIzaSyAPV75YKlOeYl8-GrPienQomG4DDkSwL10",
-  authDomain: "stocks-verify.firebaseapp.com",
-  projectId: "stocks-verify",
-  storageBucket: "stocks-verify.firebasestorage.app",
-  messagingSenderId: "613508955216",
-  appId: "1:613508955216:web:7a54993692d04c32486555",
-  measurementId: "G-YNWTSE94S0"
+    apiKey: "AIzaSyAPV75YKlOeYl8-GrPienQomG4DDkSwL10",
+    authDomain: "stocks-verify.firebaseapp.com",
+    projectId: "stocks-verify",
+    storageBucket: "stocks-verify.firebasestorage.app",
+    messagingSenderId: "613508955216",
+    appId: "1:613508955216:web:7a54993692d04c32486555",
+    measurementId: "G-YNWTSE94S0"
 };
 
 // Initialize Firebase
@@ -722,7 +721,7 @@ function saveWatchlist(uid, symbols) {
 function startDataStream() {
     if (intervalId) clearInterval(intervalId);
     fetchAllPrices();
-    intervalId = setInterval(fetchAllPrices, 3000);
+    intervalId = setInterval(fetchAllPrices, 1000);  // ← עדכון כל שנייה!
 }
 
 function stopDataStream() {
@@ -995,5 +994,3 @@ async function removeSymbolFromWatchlist(event, symbolToRemove) {
 
 </body>
 </html>
-
-
