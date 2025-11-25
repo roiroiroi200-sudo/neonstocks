@@ -1,0 +1,245 @@
+:root {
+    --bg-deep: #000814;
+    --card-bg: rgba(10, 15, 30, 0.85);
+    --neon-cyan: #00f3ff;
+    --neon-purple: #bc13fe;
+    --text-main: #e0e7ff;
+    --text-muted: #8b9dc3;
+    --border-glow: rgba(0, 243, 255, 0.3);
+    --danger: #ff4d4d;
+    --success: #00ff9d;
+    --warning: #ffd166;
+    --gold: #ffd700;
+    
+    --bg-gradient: linear-gradient(135deg, #000814 0%, #001d3d 50%, #000814 100%);
+    --font-main: 'Inter', sans-serif;
+    --font-nums: 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--font-main);
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+/* --- 1. מסך טעינה וכניסה (החלק שהיה חסר) --- */
+
+/* AUTH LOADER */
+#auth-loader {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: #000814; z-index: 30000;
+    display: flex; align-items: center; justify-content: center;
+}
+.loader-spinner {
+    width: 50px; height: 50px;
+    border: 5px solid rgba(0, 243, 255, 0.1);
+    border-top: 5px solid var(--neon-cyan);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* LOGIN SCREEN */
+#login-screen {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: #000814; z-index: 20000;
+    display: flex; /* Flex is managed by JS (none/flex) but styling needs it */
+    align-items: center; justify-content: center;
+    flex-direction: column;
+}
+
+.login-box {
+    background: rgba(10, 15, 30, 0.95);
+    padding: 40px; border-radius: 20px;
+    border: 1px solid var(--border-glow);
+    box-shadow: 0 0 50px rgba(0, 243, 255, 0.15);
+    text-align: center; width: 100%; max-width: 400px;
+    backdrop-filter: blur(10px);
+}
+
+.login-title {
+    font-size: 2rem; font-weight: 900; margin-bottom: 30px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.input-group { margin-bottom: 20px; text-align: left; }
+.input-group label { display: block; color: var(--text-muted); margin-bottom: 8px; font-size: 0.9rem; }
+
+.input-group input {
+    width: 100%; padding: 12px; 
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); 
+    border-radius: 8px;
+    color: #fff; outline: none; transition: 0.3s;
+    font-family: var(--font-main);
+}
+.input-group input:focus { 
+    border-color: var(--neon-cyan); 
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+.btn-primary {
+    width: 100%; padding: 12px; background: var(--neon-cyan);
+    color: #000; font-weight: bold; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 1rem; margin-bottom: 15px;
+    transition: 0.3s; text-transform: uppercase;
+}
+.btn-primary:hover { 
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); 
+    transform: translateY(-2px);
+}
+
+.btn-google {
+    width: 100%; padding: 12px; background: #fff;
+    color: #333; font-weight: bold; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: 0.3s;
+}
+.btn-google:hover { background: #f1f1f1; }
+
+.divider { margin: 20px 0; color: var(--text-muted); font-size: 0.8rem; }
+.error-msg { color: var(--danger); font-size: 0.9rem; margin-bottom: 15px; display: none; }
+
+
+/* --- 2. אפליקציה ראשית (Main App) --- */
+
+.user-profile {
+    position: absolute; top: 20px; right: 20px;
+    display: flex; align-items: center; gap: 15px;
+    z-index: 100;
+}
+.user-email { color: #888; font-size: 0.9rem; }
+.logout-btn {
+    background: rgba(255, 77, 77, 0.2); border: 1px solid var(--danger);
+    color: var(--danger); padding: 6px 16px; border-radius: 6px;
+    cursor: pointer; font-size: 0.8rem; font-weight: 600;
+    transition: 0.3s;
+}
+.logout-btn:hover { background: rgba(255, 77, 77, 0.4); }
+
+header { text-align: center; margin-bottom: 40px; margin-top: 20px; }
+h1 { 
+    font-size: 2.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; 
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); 
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+    text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); 
+}
+
+/* Grid & Cards */
+.stock-grid { 
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 50px; 
+}
+
+.card { 
+    background: var(--card-bg); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 16px; padding: 20px; cursor: pointer; 
+    transition: all 0.3s ease; overflow: hidden; min-height: 200px; 
+    position: relative; display: flex; flex-direction: column; 
+    border-left: 3px solid transparent;
+}
+.card:hover { 
+    transform: translateY(-5px); border-color: var(--border-glow); 
+    box-shadow: 0 10px 40px rgba(0, 243, 255, 0.15); 
+}
+
+/* סוגי כרטיסים */
+.card.type-stock { border-left-color: var(--neon-cyan); }
+.card.type-crypto { border-left-color: var(--neon-purple); }
+.card.type-metal { border-left-color: var(--gold); }
+
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; position: relative; }
+.ticker { font-size: 1.6rem; font-weight: 800; color: #fff; }
+
+.change-badge { font-size: 0.85rem; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+.up { color: var(--success); background: rgba(0, 255, 157, 0.15); }
+.down { color: var(--danger); background: rgba(255, 77, 77, 0.15); }
+
+.price-display { 
+    font-family: var(--font-nums); font-weight: 700; font-size: 1.5rem; 
+    color: #fff; margin-bottom: 15px; transition: all 0.3s ease; 
+}
+.price-display.flash-up { color: var(--success); text-shadow: 0 0 10px rgba(0, 255, 157, 0.5); }
+.price-display.flash-down { color: var(--danger); text-shadow: 0 0 10px rgba(255, 77, 77, 0.5); }
+
+.mini-chart { width: 100%; height: 80px; margin-top: auto; }
+
+
+/* --- 3. מודל ולשוניות (Modal & Tabs) --- */
+.modal-overlay { 
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+    background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(15px); 
+    display: none; align-items: center; justify-content: center; z-index: 9999; padding: 10px; 
+}
+.modal-overlay.active { display: flex; }
+
+.modal { 
+    background: #001529; border: 1px solid var(--border-glow); border-radius: 20px; 
+    width: 100%; max-width: 95vw; height: 90vh; overflow: hidden; padding: 0; 
+    box-shadow: 0 0 50px rgba(0, 243, 255, 0.2); position: relative; display: flex; flex-direction: column; 
+}
+
+.modal-header { 
+    background: rgba(0, 21, 41, 0.95); padding: 15px 25px; 
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2); 
+    display: flex; justify-content: space-between; align-items: center; z-index: 10002; 
+}
+
+.modal-title-group { display: flex; align-items: baseline; gap: 15px; }
+.modal-symbol { font-size: 1.8rem; font-weight: 900; color: var(--neon-cyan); letter-spacing: 1px; }
+.modal-price { font-size: 1.6rem; font-weight: 700; color: #fff; font-family: var(--font-nums); }
+.modal-change { font-size: 0.95rem; padding: 4px 10px; border-radius: 5px; font-weight: 600; margin-left: 10px; }
+
+.close-btn { 
+    background: #222; border: 1px solid #444; color: #fff; width: 35px; height: 35px; 
+    border-radius: 50%; cursor: pointer; font-size: 1.3rem; 
+    display: flex; align-items: center; justify-content: center; 
+}
+.close-btn:hover { background: #333; }
+
+.tabs-container { display: flex; background: rgba(255,255,255,0.03); padding: 0 25px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.tab-btn { 
+    background: transparent; border: none; color: var(--text-muted); 
+    padding: 12px 18px; cursor: pointer; font-weight: 600; font-size: 0.9rem; 
+    text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; border-bottom: 2px solid transparent; 
+}
+.tab-btn:hover { color: #fff; }
+.tab-btn.active { color: var(--neon-cyan); border-bottom: 2px solid var(--neon-cyan); }
+
+.tab-content { flex: 1; overflow-y: auto; padding: 0; display: none; height: 100%; }
+.tab-content.active { display: block; }
+
+#chart_container, #technical_container { width: 100%; height: 100%; }
+
+/* לשונית פונדמנטלי */
+.fundamental-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 20px; padding: 20px; height: 100%; }
+.fund-card { 
+    background: linear-gradient(135deg, rgba(0, 243, 255, 0.08), rgba(188, 19, 254, 0.1)); 
+    border-radius: 14px; padding: 16px 18px; 
+    border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 0 25px rgba(0, 243, 255, 0.15); 
+}
+.fund-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; }
+.fund-main { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+.fund-sub { font-size: 0.85rem; color: var(--text-muted); }
+.sentiment-badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin-right: 8px; }
+.sentiment-buy { background: rgba(0,255,157,0.12); color: var(--success); }
+.sentiment-sell { background: rgba(255,77,77,0.12); color: var(--danger); }
+.sentiment-hold { background: rgba(255,209,102,0.15); color: var(--warning); }
+.fund-list { list-style: none; margin-top: 6px; padding: 0; }
+.fund-list li { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
+.news-item { margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.06); }
+.news-title { font-size: 0.9rem; font-weight: 600; }
+.news-meta { font-size: 0.75rem; color: var(--text-muted); }
+
+/* אנימציות */
+@keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
