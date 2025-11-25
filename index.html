@@ -284,7 +284,6 @@
             measurementId: "G-YNWTSE94S0"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -292,7 +291,6 @@
         auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
             .catch((error) => { console.error("Persistence error:", error); });
 
-        // --- AUTHENTICATION LOGIC ---
         auth.onAuthStateChanged(user => {
             document.getElementById('auth-loader').style.display = 'none';
 
@@ -347,7 +345,6 @@
             err.innerText = msg;
         }
 
-        // --- APP LOGIC WITH FIRESTORE WATCHLIST ---
         const API_URL = 'https://stocks-rhux.onrender.com/api/prices';
         const defaultSymbolMap = {
             'BTC': { tv: 'BINANCE:BTCUSDT', type: 'crypto', binance: 'BTCUSDT' },
@@ -408,7 +405,7 @@
         function startDataStream() {
             if(intervalId) return;
             fetchAllPrices();
-            intervalId = setInterval(fetchAllPrices, 1000);  // עדכון כל שנייה!
+            intervalId = setInterval(fetchAllPrices, 1000);
         }
 
         function stopDataStream() {
@@ -427,7 +424,8 @@
             for(let i = 0; i < 20; i++) {
                 y += (Math.random() - 0.5) * 15;
                 if(isUp) y -= 1; else y += 1;
-                y = Math.max(10, Math.min(70, y)); points.push(`${i*5},${y}`);
+                y = Math.max(10, Math.min(70, y)); 
+                points.push(`${i*5},${y}`);
             }
             return `<svg class="mini-chart" viewBox="0 0 100 80" preserveAspectRatio="none"><polyline points="${points.join(' ')}" fill="none" stroke="${color}" stroke-width="2" opacity="0.8"/></svg>`;
         }
@@ -478,19 +476,26 @@
             } catch(e) { console.error('API error:', e); }
         }
 
+        // ✅ הפונקציה המתוקנת - ללא עדכון גרף!
         function updateGrid() {
             const grid = document.getElementById('grid');
             if(grid.children.length === 0) { renderInitialGrid(); return; }
             
             userWatchlist.forEach(sym => {
-                const item = priceData[sym]; if(!item) return;
+                const item = priceData[sym]; 
+                if(!item) return;
+                
                 const priceEl = document.querySelector(`[data-symbol="${sym}"] .price-display`);
                 const badgeEl = document.querySelector(`[data-symbol="${sym}"] .change-badge`);
                 
                 if(priceEl && badgeEl) {
-                    const newPrice = item.price; const oldPrice = previousPrices[sym] || newPrice;
+                    const newPrice = item.price; 
+                    const oldPrice = previousPrices[sym] || newPrice;
+                    
+                    // עדכון מחיר בלבד
                     priceEl.textContent = `$${newPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
                     
+                    // אפקט הבהוב
                     if(newPrice > oldPrice) { 
                         priceEl.classList.remove('flash-down'); 
                         priceEl.classList.add('flash-up'); 
@@ -502,17 +507,21 @@
                         setTimeout(() => priceEl.classList.remove('flash-down'), 500); 
                     }
                     
+                    // עדכון אחוז שינוי
                     const changeClass = item.change >= 0 ? 'up' : 'down';
                     const changeSign = item.change >= 0 ? '+' : '';
                     badgeEl.className = `change-badge ${changeClass}`;
                     badgeEl.textContent = `${changeSign}${item.change.toFixed(2)}%`;
+                    
                     previousPrices[sym] = newPrice;
                 }
             });
         }
 
         function renderInitialGrid() {
-            const grid = document.getElementById('grid'); grid.innerHTML = '';
+            const grid = document.getElementById('grid'); 
+            grid.innerHTML = '';
+            
             userWatchlist.forEach(sym => {
                 const item = priceData[sym] || { price: 0, change: 0 };
                 previousPrices[sym] = item.price;
@@ -520,6 +529,7 @@
                 const changeClass = item.change >= 0 ? 'up' : 'down';
                 const changeSign = item.change >= 0 ? '+' : '';
                 const chartColor = type === 'crypto' ? '#bc13fe' : (type === 'metal' ? '#ffd700' : '#00f3ff');
+                
                 const div = document.createElement('div');
                 div.className = `card`; 
                 div.setAttribute('data-type', type); 
@@ -558,6 +568,29 @@
             try {
                 await saveWatchlist(auth.currentUser.uid, userWatchlist);
                 inputEl.value = '';
+                
+                // רנדור הכרטיס החדש מיד
+                const grid = document.getElementById('grid');
+                const item = { price: 0, change: 0 };
+                const type = getAssetType(rawSymbol);
+                const chartColor = type === 'crypto' ? '#bc13fe' : (type === 'metal' ? '#ffd700' : '#00f3ff');
+                
+                const div = document.createElement('div');
+                div.className = `card`; 
+                div.setAttribute('data-type', type); 
+                div.setAttribute('data-symbol', rawSymbol);
+                div.onclick = () => openModal(rawSymbol, item);
+                div.innerHTML = `
+                    <button class="delete-btn" onclick="removeSymbolFromWatchlist(event, '${rawSymbol}')">×</button>
+                    <div class="card-header">
+                        <div class="ticker">${rawSymbol}</div>
+                        <div class="change-badge up">+0.00%</div>
+                    </div>
+                    <div class="price-display">$0.00</div>
+                    ${generateMiniChart(true, chartColor)}
+                `;
+                grid.appendChild(div);
+                
                 fetchAllPrices();
             } catch (e) {
                 errorEl.textContent = 'Error saving.';
