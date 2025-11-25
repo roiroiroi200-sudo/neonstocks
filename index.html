@@ -336,29 +336,32 @@
             err.innerText = msg;
         }
 
+        // ✅ חזרה ל-API המקורי שלך
+        const API_URL = 'https://stocks-rhux.onrender.com/api/prices';
+
         const defaultSymbolMap = {
-            'BTC': { tv: 'BINANCE:BTCUSDT', type: 'crypto', binance: 'BTCUSDT', yahoo: 'BTC-USD' },
-            'ETH': { tv: 'BINANCE:ETHUSDT', type: 'crypto', binance: 'ETHUSDT', yahoo: 'ETH-USD' },
-            'SOL': { tv: 'BINANCE:SOLUSDT', type: 'crypto', binance: 'SOLUSDT', yahoo: 'SOL-USD' },
-            'XRP': { tv: 'BINANCE:XRPUSDT', type: 'crypto', binance: 'XRPUSDT', yahoo: 'XRP-USD' },
-            'DOGE': { tv: 'BINANCE:DOGEUSDT', type: 'crypto', binance: 'DOGEUSDT', yahoo: 'DOGE-USD' },
-            'IBIT': { tv: 'NASDAQ:IBIT', type: 'stock', yahoo: 'IBIT' },
-            'QQQ': { tv: 'NASDAQ:QQQ', type: 'stock', yahoo: 'QQQ' },
-            'SPY': { tv: 'AMEX:SPY', type: 'stock', yahoo: 'SPY' },
-            'NVDA': { tv: 'NASDAQ:NVDA', type: 'stock', yahoo: 'NVDA' },
-            'TSLA': { tv: 'NASDAQ:TSLA', type: 'stock', yahoo: 'TSLA' },
-            'PLTR': { tv: 'NYSE:PLTR', type: 'stock', yahoo: 'PLTR' },
-            'META': { tv: 'NASDAQ:META', type: 'stock', yahoo: 'META' },
-            'AMD': { tv: 'NASDAQ:AMD', type: 'stock', yahoo: 'AMD' },
-            'AMZN': { tv: 'NASDAQ:AMZN', type: 'stock', yahoo: 'AMZN' },
-            'MSFT': { tv: 'NASDAQ:MSFT', type: 'stock', yahoo: 'MSFT' },
-            'GOOGL': { tv: 'NASDAQ:GOOGL', type: 'stock', yahoo: 'GOOGL' },
-            'COIN': { tv: 'NASDAQ:COIN', type: 'stock', yahoo: 'COIN' },
-            'MSTR': { tv: 'NASDAQ:MSTR', type: 'stock', yahoo: 'MSTR' },
-            'PANW': { tv: 'NASDAQ:PANW', type: 'stock', yahoo: 'PANW' },
-            'GOLD': { tv: 'TVC:GOLD', type: 'metal', yahoo: 'GC=F' },
-            'SILVER': { tv: 'TVC:SILVER', type: 'metal', yahoo: 'SI=F' },
-            'OIL': { tv: 'TVC:USOIL', type: 'metal', yahoo: 'CL=F' }
+            'BTC': { tv: 'BINANCE:BTCUSDT', type: 'crypto', binance: 'BTCUSDT' },
+            'ETH': { tv: 'BINANCE:ETHUSDT', type: 'crypto', binance: 'ETHUSDT' },
+            'SOL': { tv: 'BINANCE:SOLUSDT', type: 'crypto', binance: 'SOLUSDT' },
+            'XRP': { tv: 'BINANCE:XRPUSDT', type: 'crypto', binance: 'XRPUSDT' },
+            'DOGE': { tv: 'BINANCE:DOGEUSDT', type: 'crypto', binance: 'DOGEUSDT' },
+            'IBIT': { tv: 'NASDAQ:IBIT', type: 'stock' },
+            'QQQ': { tv: 'NASDAQ:QQQ', type: 'stock' },
+            'SPY': { tv: 'AMEX:SPY', type: 'stock' },
+            'NVDA': { tv: 'NASDAQ:NVDA', type: 'stock' },
+            'TSLA': { tv: 'NASDAQ:TSLA', type: 'stock' },
+            'PLTR': { tv: 'NYSE:PLTR', type: 'stock' },
+            'META': { tv: 'NASDAQ:META', type: 'stock' },
+            'AMD': { tv: 'NASDAQ:AMD', type: 'stock' },
+            'AMZN': { tv: 'NASDAQ:AMZN', type: 'stock' },
+            'MSFT': { tv: 'NASDAQ:MSFT', type: 'stock' },
+            'GOOGL': { tv: 'NASDAQ:GOOGL', type: 'stock' },
+            'COIN': { tv: 'NASDAQ:COIN', type: 'stock' },
+            'MSTR': { tv: 'NASDAQ:MSTR', type: 'stock' },
+            'PANW': { tv: 'NASDAQ:PANW', type: 'stock' },
+            'GOLD': { tv: 'TVC:GOLD', type: 'metal' },
+            'SILVER': { tv: 'TVC:SILVER', type: 'metal' },
+            'OIL': { tv: 'TVC:USOIL', type: 'metal' }
         };
 
         let userWatchlist = [];
@@ -395,7 +398,7 @@
         function startDataStream() {
             if(intervalId) return;
             fetchAllPrices();
-            intervalId = setInterval(fetchAllPrices, 3000); // עדכון כל 3 שניות
+            intervalId = setInterval(fetchAllPrices, 1000); // עדכון כל שנייה
         }
 
         function stopDataStream() {
@@ -456,39 +459,30 @@
             }
         }
 
-        // ✅ תיקון: Yahoo Finance API חינמי!
+        // ✅ חזרה ל-API המקורי שלך - מהיר יותר!
         async function fetchStockPrices() {
             const stockSymbols = userWatchlist.filter(sym => defaultSymbolMap[sym]?.type !== 'crypto');
             if (stockSymbols.length === 0) return;
             
-            for (const sym of stockSymbols) {
-                try {
-                    const yahooSymbol = defaultSymbolMap[sym]?.yahoo || sym;
-                    
-                    // Yahoo Finance API
-                    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${yahooSymbol}?interval=1d&range=1d`;
-                    const res = await fetch(url);
-                    const data = await res.json();
-                    
-                    if (data.chart && data.chart.result && data.chart.result[0]) {
-                        const result = data.chart.result[0];
-                        const meta = result.meta;
-                        const quote = result.indicators.quote[0];
-                        
-                        const currentPrice = meta.regularMarketPrice || quote.close[quote.close.length - 1];
-                        const previousClose = meta.previousClose || meta.chartPreviousClose;
-                        const change = ((currentPrice - previousClose) / previousClose) * 100;
-                        
+            try {
+                const res = await fetch(`${API_URL}?symbols=${stockSymbols.join(',')}`);
+                const data = await res.json();
+                
+                console.log('📊 API Response:', data);
+                
+                Object.keys(data).forEach(sym => {
+                    if (data[sym] && data[sym].price) {
                         priceData[sym] = {
-                            price: currentPrice,
-                            change: change
+                            price: data[sym].price,
+                            change: data[sym].change || 0
                         };
-                        
-                        console.log(`✅ ${sym}: $${currentPrice.toFixed(2)} (${change >= 0 ? '+' : ''}${change.toFixed(2)}%)`);
+                        console.log(`✅ ${sym}: $${data[sym].price} (${data[sym].change >= 0 ? '+' : ''}${data[sym].change}%)`);
                     }
-                } catch(e) {
-                    console.error(`❌ Error fetching ${sym}:`, e);
-                }
+                });
+                
+                console.log('✅ Stocks updated:', Object.keys(priceData).filter(k => defaultSymbolMap[k]?.type !== 'crypto'));
+            } catch(e) { 
+                console.error('❌ API error:', e); 
             }
         }
 
