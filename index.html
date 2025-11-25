@@ -397,19 +397,14 @@
             console.log(`✅ Switched to ${pageName} page`);
         }
 
-        // ✅ API URL עם timeout ארוך יותר
         const API_URL = 'https://stocks-rhux.onrender.com/api/prices';
 
-        // ✅ מפה מורחבת עם כל הסימולים
         const defaultSymbolMap = {
-            // Crypto
             'BTC': { tv: 'BINANCE:BTCUSDT', type: 'crypto', binance: 'BTCUSDT' },
             'ETH': { tv: 'BINANCE:ETHUSDT', type: 'crypto', binance: 'ETHUSDT' },
             'SOL': { tv: 'BINANCE:SOLUSDT', type: 'crypto', binance: 'SOLUSDT' },
             'XRP': { tv: 'BINANCE:XRPUSDT', type: 'crypto', binance: 'XRPUSDT' },
             'DOGE': { tv: 'BINANCE:DOGEUSDT', type: 'crypto', binance: 'DOGEUSDT' },
-            
-            // Stocks
             'IBIT': { tv: 'NASDAQ:IBIT', type: 'stock' },
             'QQQ': { tv: 'NASDAQ:QQQ', type: 'stock' },
             'SPY': { tv: 'AMEX:SPY', type: 'stock' },
@@ -424,8 +419,6 @@
             'COIN': { tv: 'NASDAQ:COIN', type: 'stock' },
             'MSTR': { tv: 'NASDAQ:MSTR', type: 'stock' },
             'PANW': { tv: 'NASDAQ:PANW', type: 'stock' },
-            
-            // Metals
             'GOLD': { tv: 'TVC:GOLD', type: 'metal' },
             'SILVER': { tv: 'TVC:SILVER', type: 'metal' },
             'OIL': { tv: 'TVC:USOIL', type: 'metal' }
@@ -465,7 +458,7 @@
         function startDataStream() {
             if(intervalId) return;
             fetchAllPrices();
-            intervalId = setInterval(fetchAllPrices, 2000); // ✅ כל 2 שניות במקום 1
+            intervalId = setInterval(fetchAllPrices, 2000);
         }
 
         function stopDataStream() {
@@ -490,7 +483,6 @@
             return `<svg class="mini-chart" viewBox="0 0 100 80" preserveAspectRatio="none"><polyline points="${points.join(' ')}" fill="none" stroke="${color}" stroke-width="2" opacity="0.8"/></svg>`;
         }
 
-        // ✅ פונקציה משופרת עם error handling
         async function fetchAllPrices() {
             try {
                 await Promise.all([fetchCryptoPrices(), fetchStockPrices()]);
@@ -503,7 +495,6 @@
             }
         }
 
-        // ✅ קריפטו - Binance API (אמין ומהיר)
         async function fetchCryptoPrices() {
             const cryptoSymbols = userWatchlist.filter(sym => defaultSymbolMap[sym]?.type === 'crypto');
             if (cryptoSymbols.length === 0) return;
@@ -529,7 +520,7 @@
                             price: parseFloat(item.lastPrice),
                             change: parseFloat(item.priceChangePercent)
                         };
-                        console.log(`✅ ${sym}: $${priceData[sym].price} (${priceData[sym].change}%)`);
+                        console.log(`✅ ${sym}: $${priceData[sym].price.toFixed(2)} (${priceData[sym].change >= 0 ? '+' : ''}${priceData[sym].change.toFixed(2)}%)`);
                     }
                 });
                 
@@ -538,14 +529,13 @@
             }
         }
 
-        // ✅ מניות - API שלך עם timeout ארוך יותר
         async function fetchStockPrices() {
             const stockSymbols = userWatchlist.filter(sym => defaultSymbolMap[sym]?.type !== 'crypto');
             if (stockSymbols.length === 0) return;
             
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 שניות timeout
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
                 
                 const res = await fetch(`${API_URL}?symbols=${stockSymbols.join(',')}`, {
                     signal: controller.signal,
@@ -560,15 +550,22 @@
                 
                 console.log('📊 Stocks API Response:', data);
                 
+                if (!data || typeof data !== 'object') {
+                    console.warn('⚠️ Invalid API response format');
+                    return;
+                }
+                
                 Object.keys(data).forEach(sym => {
-                    if (data[sym] && typeof data[sym].price === 'number') {
+                    if (data[sym] && 
+                        typeof data[sym] === 'object' && 
+                        typeof data[sym].price === 'number' && 
+                        data[sym].price > 0) {
+                        
                         priceData[sym] = {
                             price: data[sym].price,
                             change: data[sym].change || 0
                         };
-                        console.log(`✅ ${sym}: $${priceData[sym].price} (${priceData[sym].change >= 0 ? '+' : ''}${priceData[sym].change}%)`);
-                    } else {
-                        console.warn(`⚠️ ${sym}: No valid price data`);
+                        console.log(`✅ ${sym}: $${priceData[sym].price.toFixed(2)} (${priceData[sym].change >= 0 ? '+' : ''}${priceData[sym].change.toFixed(2)}%)`);
                     }
                 });
                 
