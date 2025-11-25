@@ -111,8 +111,46 @@
         }
         .logout-btn:hover { background: rgba(255, 77, 77, 0.4); }
 
-        header { text-align: center; margin-bottom: 40px; margin-top: 20px; }
+        header { text-align: center; margin-bottom: 30px; margin-top: 20px; }
         h1 { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+
+        /* ✅ תפריט ניווט Trading / Sport */
+        .main-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            padding: 12px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .nav-btn.active {
+            background: var(--neon-cyan);
+            color: #000;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+
+        /* דפים */
+        .page-content { display: none; }
+        .page-content.active { display: block; }
         
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; padding-bottom: 50px; }
         
@@ -140,6 +178,95 @@
             transition: opacity 0.3s;
         }
         .delete-btn:hover { opacity: 1; }
+
+        /* Sport Page Styles */
+        .sport-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+        .sport-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .sport-title {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .sport-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .sport-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .sport-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .sport-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-glow);
+            box-shadow: 0 10px 40px rgba(0, 243, 255, 0.15);
+        }
+        .league-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .league-icon {
+            font-size: 1.8rem;
+        }
+        .league-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .match-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(255,255,255,0.05);
+        }
+        .match-item:last-child {
+            border-bottom: none;
+        }
+        .team {
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+        .score {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+        }
+        .live-badge {
+            background: var(--danger);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
 
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 10px; }
         .modal-overlay.active { display: flex; }
@@ -220,17 +347,194 @@
             <p style="color:#888;">REAL-TIME MARKET DATA</p>
         </header>
 
-        <div style="max-width: 1400px; margin: 0 auto 30px; display: flex; gap: 10px; align-items: center; justify-content: center;">
-            <input 
-                type="text" 
-                id="newSymbolInput" 
-                placeholder="TSLA" 
-                style="padding: 10px; border-radius: 8px; border: 1px solid var(--neon-cyan); background: rgba(0,0,0,0.5); color: var(--text-main); width: 250px; text-transform: uppercase;">
-            <button class="btn-primary" onclick="addSymbolToWatchlist()" style="width: auto; margin: 0; padding: 10px 20px;">+ ADD</button>
-            <span id="symbolError" class="error-msg" style="margin-bottom: 0;"></span>
+        <!-- ✅ תפריט ניווט Trading / Sport -->
+        <div class="main-nav">
+            <button class="nav-btn active" onclick="switchPage('trading')">📈 TRADING</button>
+            <button class="nav-btn" onclick="switchPage('sport')">⚽ SPORT</button>
         </div>
 
-        <div class="grid" id="grid">Loading assets...</div>
+        <!-- דף Trading -->
+        <div id="page-trading" class="page-content active">
+            <div style="max-width: 1400px; margin: 0 auto 30px; display: flex; gap: 10px; align-items: center; justify-content: center;">
+                <input 
+                    type="text" 
+                    id="newSymbolInput" 
+                    placeholder="TSLA" 
+                    style="padding: 10px; border-radius: 8px; border: 1px solid var(--neon-cyan); background: rgba(0,0,0,0.5); color: var(--text-main); width: 250px; text-transform: uppercase;">
+                <button class="btn-primary" onclick="addSymbolToWatchlist()" style="width: auto; margin: 0; padding: 10px 20px;">+ ADD</button>
+                <span id="symbolError" class="error-msg" style="margin-bottom: 0;"></span>
+            </div>
+
+            <div class="grid" id="grid">Loading assets...</div>
+        </div>
+
+        <!-- דף Sport -->
+        <div id="page-sport" class="page-content">
+            <div class="sport-section">
+                <div class="sport-header">
+                    <div class="sport-title">LIVE SPORTS</div>
+                    <div class="sport-subtitle">Real-time scores & results</div>
+                </div>
+
+                <div class="sport-grid">
+                    <!-- Premier League -->
+                    <div class="sport-card">
+                        <div class="league-header">
+                            <span class="league-icon">⚽</span>
+                            <span class="league-name">Premier League</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Manchester City</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="live-badge">LIVE</span>
+                                <span class="score">2 - 1</span>
+                            </div>
+                            <span class="team">Liverpool</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Arsenal</span>
+                            <span class="score">3 - 0</span>
+                            <span class="team">Chelsea</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Man United</span>
+                            <span class="score">1 - 1</span>
+                            <span class="team">Tottenham</span>
+                        </div>
+                    </div>
+
+                    <!-- NBA -->
+                    <div class="sport-card">
+                        <div class="league-header">
+                            <span class="league-icon">🏀</span>
+                            <span class="league-name">NBA</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Lakers</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="live-badge">LIVE</span>
+                                <span class="score">98 - 95</span>
+                            </div>
+                            <span class="team">Warriors</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Celtics</span>
+                            <span class="score">112 - 108</span>
+                            <span class="team">76ers</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Bucks</span>
+                            <span class="score">105 - 102</span>
+                            <span class="team">Heat</span>
+                        </div>
+                    </div>
+
+                    <!-- La Liga -->
+                    <div class="sport-card">
+                        <div class="league-header">
+                            <span class="league-icon">⚽</span>
+                            <span class="league-name">La Liga</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Real Madrid</span>
+                            <span class="score">2 - 0</span>
+                            <span class="team">Barcelona</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Atletico Madrid</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="live-badge">LIVE</span>
+                                <span class="score">1 - 1</span>
+                            </div>
+                            <span class="team">Sevilla</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Valencia</span>
+                            <span class="score">3 - 2</span>
+                            <span class="team">Villarreal</span>
+                        </div>
+                    </div>
+
+                    <!-- Champions League -->
+                    <div class="sport-card">
+                        <div class="league-header">
+                            <span class="league-icon">🏆</span>
+                            <span class="league-name">Champions League</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Bayern Munich</span>
+                            <span class="score">4 - 1</span>
+                            <span class="team">PSG</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Inter Milan</span>
+                            <span class="score">2 - 2</span>
+                            <span class="team">AC Milan</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Juventus</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="live-badge">LIVE</span>
+                                <span class="score">1 - 0</span>
+                            </div>
+                            <span class="team">Dortmund</span>
+                        </div>
+                    </div>
+
+                    <!-- NFL -->
+                    <div class="sport-card">
+                        <div class="league-header">
+                            <span class="league-icon">🏈</span>
+                            <span class="league-name">NFL</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Chiefs</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="live-badge">LIVE</span>
+                                <span class="score">24 - 21</span>
+                            </div>
+                            <span class="team">49ers</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Cowboys</span>
+                            <span class="score">31 - 28</span>
+                            <span class="team">Eagles</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Packers</span>
+                            <span class="score">27 - 24</span>
+                            <span class="team">Bears</span>
+                        </div>
+                    </div>
+
+                    <!-- Tennis -->
+                    <div class="sport-card">
+                        <div class="league-header">
+                            <span class="league-icon">🎾</span>
+                            <span class="league-name">ATP Tour</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Djokovic</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="live-badge">LIVE</span>
+                                <span class="score">6-4, 5-3</span>
+                            </div>
+                            <span class="team">Alcaraz</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Sinner</span>
+                            <span class="score">7-6, 6-3</span>
+                            <span class="team">Medvedev</span>
+                        </div>
+                        <div class="match-item">
+                            <span class="team">Rune</span>
+                            <span class="score">6-4, 4-6, 6-2</span>
+                            <span class="team">Tsitsipas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal-overlay" id="modalOverlay">
@@ -336,7 +640,19 @@
             err.innerText = msg;
         }
 
-        // ✅ חזרה ל-API המקורי שלך
+        // ✅ מעבר בין דפים (Trading / Sport)
+        function switchPage(pageName) {
+            // הסרת active מכל הכפתורים והדפים
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+            
+            // הוספת active לכפתור ולדף המתאימים
+            document.querySelector(`.nav-btn[onclick="switchPage('${pageName}')"]`).classList.add('active');
+            document.getElementById(`page-${pageName}`).classList.add('active');
+            
+            console.log(`✅ Switched to ${pageName} page`);
+        }
+
         const API_URL = 'https://stocks-rhux.onrender.com/api/prices';
 
         const defaultSymbolMap = {
@@ -398,7 +714,7 @@
         function startDataStream() {
             if(intervalId) return;
             fetchAllPrices();
-            intervalId = setInterval(fetchAllPrices, 1000); // עדכון כל שנייה
+            intervalId = setInterval(fetchAllPrices, 1000);
         }
 
         function stopDataStream() {
@@ -452,14 +768,11 @@
                         };
                     }
                 });
-                
-                console.log('✅ Crypto updated:', Object.keys(priceData).filter(k => defaultSymbolMap[k]?.type === 'crypto'));
             } catch(e) { 
                 console.error('❌ Binance error:', e);
             }
         }
 
-        // ✅ חזרה ל-API המקורי שלך - מהיר יותר!
         async function fetchStockPrices() {
             const stockSymbols = userWatchlist.filter(sym => defaultSymbolMap[sym]?.type !== 'crypto');
             if (stockSymbols.length === 0) return;
@@ -468,19 +781,14 @@
                 const res = await fetch(`${API_URL}?symbols=${stockSymbols.join(',')}`);
                 const data = await res.json();
                 
-                console.log('📊 API Response:', data);
-                
                 Object.keys(data).forEach(sym => {
                     if (data[sym] && data[sym].price) {
                         priceData[sym] = {
                             price: data[sym].price,
                             change: data[sym].change || 0
                         };
-                        console.log(`✅ ${sym}: $${data[sym].price} (${data[sym].change >= 0 ? '+' : ''}${data[sym].change}%)`);
                     }
                 });
-                
-                console.log('✅ Stocks updated:', Object.keys(priceData).filter(k => defaultSymbolMap[k]?.type !== 'crypto'));
             } catch(e) { 
                 console.error('❌ API error:', e); 
             }
