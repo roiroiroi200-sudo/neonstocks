@@ -352,6 +352,11 @@
             'SOL': { tv: 'BINANCE:SOLUSDT', type: 'crypto', binance: 'SOLUSDT' },
             'XRP': { tv: 'BINANCE:XRPUSDT', type: 'crypto', binance: 'XRPUSDT' },
             'DOGE': { tv: 'BINANCE:DOGEUSDT', type: 'crypto', binance: 'DOGEUSDT' },
+            'ADA': { tv: 'BINANCE:ADAUSDT', type: 'crypto', binance: 'ADAUSDT' },
+            'AVAX': { tv: 'BINANCE:AVAXUSDT', type: 'crypto', binance: 'AVAXUSDT' },
+            'DOT': { tv: 'BINANCE:DOTUSDT', type: 'crypto', binance: 'DOTUSDT' },
+            'MATIC': { tv: 'BINANCE:MATICUSDT', type: 'crypto', binance: 'MATICUSDT' },
+            'LINK': { tv: 'BINANCE:LINKUSDT', type: 'crypto', binance: 'LINKUSDT' },
             'IBIT': { tv: 'NASDAQ:IBIT', type: 'stock' },
             'QQQ': { tv: 'NASDAQ:QQQ', type: 'stock' },
             'SPY': { tv: 'AMEX:SPY', type: 'stock' },
@@ -438,26 +443,55 @@
             }
         }
 
+        // ✅ תיקון Crypto API
         async function fetchCryptoPrices() {
             const cryptoSymbols = userWatchlist.filter(sym => defaultSymbolMap[sym]?.type === 'crypto');
             if (cryptoSymbols.length === 0) return;
             
-            const binanceSymbols = cryptoSymbols.map(sym => defaultSymbolMap[sym].binance);
-            
             try {
-                const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbols=${JSON.stringify(binanceSymbols)}`);
-                const data = await res.json();
+                // שליפת כל הקריפטו בבת אחת
+                const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr`);
+                const allData = await res.json();
                 
-                data.forEach(item => {
-                    const sym = Object.keys(defaultSymbolMap).find(k => defaultSymbolMap[k].binance === item.symbol);
-                    if(sym) {
+                // מיפוי לפי הסימבולים שלנו
+                cryptoSymbols.forEach(sym => {
+                    const binanceSymbol = defaultSymbolMap[sym]?.binance;
+                    if (!binanceSymbol) return;
+                    
+                    const item = allData.find(d => d.symbol === binanceSymbol);
+                    
+                    if (item) {
                         priceData[sym] = {
                             price: parseFloat(item.lastPrice),
                             change: parseFloat(item.priceChangePercent)
                         };
                     }
                 });
-            } catch(e) { console.error('Binance error:', e); }
+                
+                console.log('✅ Crypto prices updated:', Object.keys(priceData).filter(k => defaultSymbolMap[k]?.type === 'crypto'));
+            } catch(e) { 
+                console.error('❌ Binance error:', e);
+                
+                // Fallback: נסה לשלוף סימבול אחד בכל פעם
+                for (const sym of cryptoSymbols) {
+                    try {
+                        const binanceSymbol = defaultSymbolMap[sym]?.binance;
+                        if (!binanceSymbol) continue;
+                        
+                        const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`);
+                        const data = await res.json();
+                        
+                        priceData[sym] = {
+                            price: parseFloat(data.lastPrice),
+                            change: parseFloat(data.priceChangePercent)
+                        };
+                        
+                        console.log(`✅ Fetched ${sym}:`, priceData[sym]);
+                    } catch(err) {
+                        console.error(`❌ Error fetching ${sym}:`, err);
+                    }
+                }
+            }
         }
 
         async function fetchStockPrices() {
@@ -473,10 +507,13 @@
                         priceData[sym] = data[sym];
                     }
                 });
-            } catch(e) { console.error('API error:', e); }
+                
+                console.log('✅ Stock prices updated:', Object.keys(priceData).filter(k => defaultSymbolMap[k]?.type !== 'crypto'));
+            } catch(e) { 
+                console.error('❌ API error:', e); 
+            }
         }
 
-        // ✅ הפונקציה המתוקנת - ללא עדכון גרף!
         function updateGrid() {
             const grid = document.getElementById('grid');
             if(grid.children.length === 0) { renderInitialGrid(); return; }
@@ -492,10 +529,8 @@
                     const newPrice = item.price; 
                     const oldPrice = previousPrices[sym] || newPrice;
                     
-                    // עדכון מחיר בלבד
                     priceEl.textContent = `$${newPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
                     
-                    // אפקט הבהוב
                     if(newPrice > oldPrice) { 
                         priceEl.classList.remove('flash-down'); 
                         priceEl.classList.add('flash-up'); 
@@ -507,7 +542,6 @@
                         setTimeout(() => priceEl.classList.remove('flash-down'), 500); 
                     }
                     
-                    // עדכון אחוז שינוי
                     const changeClass = item.change >= 0 ? 'up' : 'down';
                     const changeSign = item.change >= 0 ? '+' : '';
                     badgeEl.className = `change-badge ${changeClass}`;
@@ -569,7 +603,6 @@
                 await saveWatchlist(auth.currentUser.uid, userWatchlist);
                 inputEl.value = '';
                 
-                // רנדור הכרטיס החדש מיד
                 const grid = document.getElementById('grid');
                 const item = { price: 0, change: 0 };
                 const type = getAssetType(rawSymbol);
