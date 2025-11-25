@@ -177,102 +177,6 @@
         }
         .delete-btn:hover { opacity: 1; }
 
-        /* Sport Page */
-        .sport-section {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-bottom: 50px;
-        }
-        .sport-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .sport-title {
-            font-size: 2rem;
-            font-weight: 900;
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-        .sport-subtitle {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        .sport-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-        }
-        .sport-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-        .sport-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--border-glow);
-            box-shadow: 0 10px 40px rgba(0, 243, 255, 0.15);
-        }
-        .league-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .league-icon {
-            font-size: 1.8rem;
-        }
-        .league-name {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #fff;
-        }
-        .match-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px dashed rgba(255,255,255,0.05);
-        }
-        .match-item:last-child {
-            border-bottom: none;
-        }
-        .team {
-            font-size: 0.95rem;
-            color: var(--text-main);
-            flex: 1;
-        }
-        .score {
-            font-family: 'Courier New', monospace;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--neon-cyan);
-            margin: 0 15px;
-        }
-        .live-badge {
-            background: var(--danger);
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        .loading-sports {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-muted);
-        }
-
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 10px; }
         .modal-overlay.active { display: flex; }
         .modal { background: #001529; border: 1px solid var(--border-glow); border-radius: 20px; width: 100%; max-width: 95vw; height: 90vh; overflow: hidden; padding: 0; box-shadow: 0 0 50px rgba(0, 243, 255, 0.2); position: relative; display: flex; flex-direction: column; }
@@ -357,7 +261,6 @@
             <button class="nav-btn" onclick="switchPage('sport')">⚽ SPORT</button>
         </div>
 
-        <!-- Trading Page -->
         <div id="page-trading" class="page-content active">
             <div style="max-width: 1400px; margin: 0 auto 30px; display: flex; gap: 10px; align-items: center; justify-content: center;">
                 <input 
@@ -372,20 +275,11 @@
             <div class="grid" id="grid">Loading assets...</div>
         </div>
 
-        <!-- Sport Page -->
         <div id="page-sport" class="page-content">
-            <div class="sport-section">
-                <div class="sport-header">
-                    <div class="sport-title">LIVE SPORTS</div>
-                    <div class="sport-subtitle">Real-time scores powered by RapidAPI</div>
-                </div>
-
-                <div class="sport-grid" id="sportGrid">
-                    <div class="loading-sports">
-                        <div class="loader-spinner" style="margin: 0 auto;"></div>
-                        <p style="margin-top: 20px;">Loading live scores...</p>
-                    </div>
-                </div>
+            <div style="max-width: 1400px; margin: 0 auto; text-align: center; padding: 50px 20px;">
+                <h2 style="font-size: 2rem; margin-bottom: 20px;">⚽ SPORT PAGE</h2>
+                <p style="color: var(--text-muted);">Get your RapidAPI key to see live sports scores!</p>
+                <a href="https://rapidapi.com" target="_blank" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: var(--neon-cyan); color: #000; text-decoration: none; border-radius: 8px; font-weight: 600;">Get RapidAPI Key</a>
             </div>
         </div>
     </div>
@@ -493,9 +387,6 @@
             err.innerText = msg;
         }
 
-        // ✅ RapidAPI Key - החלף בשלך!
-        const RAPIDAPI_KEY = 'YOUR_RAPIDAPI_KEY_HERE';
-        
         function switchPage(pageName) {
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
@@ -503,110 +394,22 @@
             document.querySelector(`.nav-btn[onclick="switchPage('${pageName}')"]`).classList.add('active');
             document.getElementById(`page-${pageName}`).classList.add('active');
             
-            if(pageName === 'sport') {
-                loadLiveSports();
-            }
-            
             console.log(`✅ Switched to ${pageName} page`);
         }
 
-        // ✅ טעינת תוצאות LIVE מ-RapidAPI
-        async function loadLiveSports() {
-            const sportGrid = document.getElementById('sportGrid');
-            
-            try {
-                // Premier League
-                const soccerResponse = await fetch('https://api-football-v1.p.rapidapi.com/v3/fixtures?live=all', {
-                    method: 'GET',
-                    headers: {
-                        'X-RapidAPI-Key': RAPIDAPI_KEY,
-                        'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com'
-                    }
-                });
-                
-                const soccerData = await soccerResponse.json();
-                
-                // NBA
-                const nbaResponse = await fetch('https://api-basketball.p.rapidapi.com/games?live=all', {
-                    method: 'GET',
-                    headers: {
-                        'X-RapidAPI-Key': RAPIDAPI_KEY,
-                        'X-RapidAPI-Host': 'api-basketball.p.rapidapi.com'
-                    }
-                });
-                
-                const nbaData = await nbaResponse.json();
-                
-                // בניית HTML
-                sportGrid.innerHTML = '';
-                
-                // כדורגל
-                if(soccerData.response && soccerData.response.length > 0) {
-                    const soccerCard = document.createElement('div');
-                    soccerCard.className = 'sport-card';
-                    soccerCard.innerHTML = `
-                        <div class="league-header">
-                            <span class="league-icon">⚽</span>
-                            <span class="league-name">Live Football</span>
-                        </div>
-                        ${soccerData.response.slice(0, 5).map(match => `
-                            <div class="match-item">
-                                <span class="team">${match.teams.home.name}</span>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span class="live-badge">LIVE</span>
-                                    <span class="score">${match.goals.home} - ${match.goals.away}</span>
-                                </div>
-                                <span class="team">${match.teams.away.name}</span>
-                            </div>
-                        `).join('')}
-                    `;
-                    sportGrid.appendChild(soccerCard);
-                }
-                
-                // כדורסל
-                if(nbaData.response && nbaData.response.length > 0) {
-                    const nbaCard = document.createElement('div');
-                    nbaCard.className = 'sport-card';
-                    nbaCard.innerHTML = `
-                        <div class="league-header">
-                            <span class="league-icon">🏀</span>
-                            <span class="league-name">Live Basketball</span>
-                        </div>
-                        ${nbaData.response.slice(0, 5).map(match => `
-                            <div class="match-item">
-                                <span class="team">${match.teams.home.name}</span>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span class="live-badge">LIVE</span>
-                                    <span class="score">${match.scores.home.total} - ${match.scores.away.total}</span>
-                                </div>
-                                <span class="team">${match.teams.away.name}</span>
-                            </div>
-                        `).join('')}
-                    `;
-                    sportGrid.appendChild(nbaCard);
-                }
-                
-                console.log('⚽ Live sports loaded');
-                
-            } catch(error) {
-                console.error('❌ Sports API error:', error);
-                sportGrid.innerHTML = `
-                    <div class="loading-sports">
-                        <p style="color: var(--danger);">Failed to load live scores. Please check your API key.</p>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Get your free API key at <a href="https://rapidapi.com" target="_blank" style="color: var(--neon-cyan);">RapidAPI.com</a></p>
-                    </div>
-                `;
-            }
-        }
-
+        // ✅ API URL עם timeout ארוך יותר
         const API_URL = 'https://stocks-rhux.onrender.com/api/prices';
 
+        // ✅ מפה מורחבת עם כל הסימולים
         const defaultSymbolMap = {
+            // Crypto
             'BTC': { tv: 'BINANCE:BTCUSDT', type: 'crypto', binance: 'BTCUSDT' },
             'ETH': { tv: 'BINANCE:ETHUSDT', type: 'crypto', binance: 'ETHUSDT' },
             'SOL': { tv: 'BINANCE:SOLUSDT', type: 'crypto', binance: 'SOLUSDT' },
             'XRP': { tv: 'BINANCE:XRPUSDT', type: 'crypto', binance: 'XRPUSDT' },
             'DOGE': { tv: 'BINANCE:DOGEUSDT', type: 'crypto', binance: 'DOGEUSDT' },
+            
+            // Stocks
             'IBIT': { tv: 'NASDAQ:IBIT', type: 'stock' },
             'QQQ': { tv: 'NASDAQ:QQQ', type: 'stock' },
             'SPY': { tv: 'AMEX:SPY', type: 'stock' },
@@ -621,6 +424,8 @@
             'COIN': { tv: 'NASDAQ:COIN', type: 'stock' },
             'MSTR': { tv: 'NASDAQ:MSTR', type: 'stock' },
             'PANW': { tv: 'NASDAQ:PANW', type: 'stock' },
+            
+            // Metals
             'GOLD': { tv: 'TVC:GOLD', type: 'metal' },
             'SILVER': { tv: 'TVC:SILVER', type: 'metal' },
             'OIL': { tv: 'TVC:USOIL', type: 'metal' }
@@ -660,7 +465,7 @@
         function startDataStream() {
             if(intervalId) return;
             fetchAllPrices();
-            intervalId = setInterval(fetchAllPrices, 1000);
+            intervalId = setInterval(fetchAllPrices, 2000); // ✅ כל 2 שניות במקום 1
         }
 
         function stopDataStream() {
@@ -685,20 +490,32 @@
             return `<svg class="mini-chart" viewBox="0 0 100 80" preserveAspectRatio="none"><polyline points="${points.join(' ')}" fill="none" stroke="${color}" stroke-width="2" opacity="0.8"/></svg>`;
         }
 
+        // ✅ פונקציה משופרת עם error handling
         async function fetchAllPrices() {
-            await Promise.all([fetchCryptoPrices(), fetchStockPrices()]);
-            updateGrid();
-            if(currentModalSymbol && priceData[currentModalSymbol]) {
-                updateModalPrice(currentModalSymbol, priceData[currentModalSymbol]);
+            try {
+                await Promise.all([fetchCryptoPrices(), fetchStockPrices()]);
+                updateGrid();
+                if(currentModalSymbol && priceData[currentModalSymbol]) {
+                    updateModalPrice(currentModalSymbol, priceData[currentModalSymbol]);
+                }
+            } catch(error) {
+                console.error('❌ Error fetching prices:', error);
             }
         }
 
+        // ✅ קריפטו - Binance API (אמין ומהיר)
         async function fetchCryptoPrices() {
             const cryptoSymbols = userWatchlist.filter(sym => defaultSymbolMap[sym]?.type === 'crypto');
             if (cryptoSymbols.length === 0) return;
             
             try {
-                const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr`);
+                const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr`, { 
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (!res.ok) throw new Error('Binance API failed');
+                
                 const allData = await res.json();
                 
                 cryptoSymbols.forEach(sym => {
@@ -712,31 +529,55 @@
                             price: parseFloat(item.lastPrice),
                             change: parseFloat(item.priceChangePercent)
                         };
+                        console.log(`✅ ${sym}: $${priceData[sym].price} (${priceData[sym].change}%)`);
                     }
                 });
+                
             } catch(e) { 
                 console.error('❌ Binance error:', e);
             }
         }
 
+        // ✅ מניות - API שלך עם timeout ארוך יותר
         async function fetchStockPrices() {
             const stockSymbols = userWatchlist.filter(sym => defaultSymbolMap[sym]?.type !== 'crypto');
             if (stockSymbols.length === 0) return;
             
             try {
-                const res = await fetch(`${API_URL}?symbols=${stockSymbols.join(',')}`);
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 שניות timeout
+                
+                const res = await fetch(`${API_URL}?symbols=${stockSymbols.join(',')}`, {
+                    signal: controller.signal,
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!res.ok) throw new Error(`API returned ${res.status}`);
+                
                 const data = await res.json();
                 
+                console.log('📊 Stocks API Response:', data);
+                
                 Object.keys(data).forEach(sym => {
-                    if (data[sym] && data[sym].price) {
+                    if (data[sym] && typeof data[sym].price === 'number') {
                         priceData[sym] = {
                             price: data[sym].price,
                             change: data[sym].change || 0
                         };
+                        console.log(`✅ ${sym}: $${priceData[sym].price} (${priceData[sym].change >= 0 ? '+' : ''}${priceData[sym].change}%)`);
+                    } else {
+                        console.warn(`⚠️ ${sym}: No valid price data`);
                     }
                 });
+                
             } catch(e) { 
-                console.error('❌ API error:', e); 
+                if (e.name === 'AbortError') {
+                    console.error('❌ API timeout after 10 seconds');
+                } else {
+                    console.error('❌ Stocks API error:', e);
+                }
             }
         }
 
@@ -801,7 +642,7 @@
                         <div class="ticker">${sym}</div>
                         <div class="change-badge ${changeClass}">${changeSign}${item.change.toFixed(2)}%</div>
                     </div>
-                    <div class="price-display">$${item.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                    <div class="price-display">${item.price > 0 ? '$' + item.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : 'Loading...'}</div>
                     ${generateMiniChart(item.change >= 0, chartColor)}
                 `;
                 grid.appendChild(div);
@@ -845,7 +686,7 @@
                         <div class="ticker">${rawSymbol}</div>
                         <div class="change-badge up">+0.00%</div>
                     </div>
-                    <div class="price-display">$0.00</div>
+                    <div class="price-display">Loading...</div>
                     ${generateMiniChart(true, chartColor)}
                 `;
                 grid.appendChild(div);
@@ -993,7 +834,7 @@
 
         function closeModal() {
             currentModalSymbol = null;
-            document.getElementById('modalOverlay').classList.add('active');
+            document.getElementById('modalOverlay').classList.remove('active');
             document.getElementById('chart_container').innerHTML = '';
             document.getElementById('technical_container').innerHTML = '';
             document.getElementById('fundamental_container').innerHTML = '';
